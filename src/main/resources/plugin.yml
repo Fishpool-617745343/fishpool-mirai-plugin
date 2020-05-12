@@ -1,0 +1,6 @@
+name: "Pool"
+author: "45gfg9"
+version: "0.1.0"
+main: "net.im45.bot.fishpool.Fishpool"
+info: ""
+depends: []
