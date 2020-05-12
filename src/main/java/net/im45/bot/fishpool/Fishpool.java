@@ -78,6 +78,10 @@ public class Fishpool extends PluginBase {
                 // {Even if no one gives me a fuck, I still will make my voice}
                 Image image = MessageUtils.newImage("{6E94879C-ACBF-BC7E-5DD3-1E2D8BB170AA}.mirai");
                 subject.sendMessageAsync(image);
+            } else if ("/what".equals(cmd)) {
+                // {No one tells me what happened}
+                Image image = MessageUtils.newImage("{54A8D367-15DB-E2FE-A281-FF7351856A1E}.mirai");
+                subject.sendMessageAsync(image);
             }
         });
     }
