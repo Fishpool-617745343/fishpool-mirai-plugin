@@ -1,14 +1,10 @@
 package net.im45.bot.fishpool;
 
-import net.mamoe.mirai.console.command.BlockingCommand;
-import net.mamoe.mirai.console.command.CommandSender;
-import net.mamoe.mirai.console.command.JCommandManager;
 import net.mamoe.mirai.console.plugins.PluginBase;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,23 +13,11 @@ import java.util.List;
 public class Fishpool extends PluginBase {
     public void onEnable() {
 
-        JCommandManager.getInstance().register(this, new BlockingCommand(
-                "zrefresh",
-                List.of("zr"),
-                "Refresh Zapic Pic List",
-                "/zr"
-        ) {
-            @Override
-            public boolean onCommandBlocking(@NotNull CommandSender commandSender, @NotNull List<String> list) {
-                return false;
-            }
-        });
-
         getEventListener().subscribeAlways(GroupMessageEvent.class, e -> {
             Group subject = e.getSubject();
             String msg = e.getMessage()
                     .toString()
-                    .replaceFirst("\\[mirai:source:\\d+,\\d+]", "");
+                    .replaceFirst("\\[mirai:source:.*?]", "");
             if (msg.isEmpty()) return;
             List<String> msgs = new ArrayList<>(Arrays.asList(msg.split(" ")));
             msgs.removeIf(String::isBlank);

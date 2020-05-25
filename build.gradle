@@ -14,8 +14,8 @@ repositories {
     jcenter()
 }
 
-def miraiCoreVersion = "1.0-RC2-1"
-def miraiConsoleVersion = "0.5.1"
+def miraiCoreVersion = "+"
+def miraiConsoleVersion = "+"
 
 dependencies {
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
