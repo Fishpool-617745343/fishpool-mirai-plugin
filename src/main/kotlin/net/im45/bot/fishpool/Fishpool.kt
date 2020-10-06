@@ -2,6 +2,7 @@ package net.im45.bot.fishpool
 
 import com.google.auto.service.AutoService
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregisterAllCommands
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.UserCommandSender
 import net.mamoe.mirai.console.plugin.jvm.JvmPlugin
@@ -14,7 +15,7 @@ import kotlin.math.abs
 object Fishpool : KotlinPlugin(
     JvmPluginDescription(
         "net.im45.bot.fishpool",
-        "0.1.1"
+        "0.2.0"
     )
 ) {
     override fun onEnable() {
@@ -24,6 +25,12 @@ object Fishpool : KotlinPlugin(
         NaCmd.register()
         PaCmd.register()
         Errcode.register()
+    }
+
+    override fun onDisable() {
+        super.onDisable()
+
+        unregisterAllCommands()
     }
 }
 
