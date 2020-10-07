@@ -72,7 +72,7 @@ object Errcode : SimpleCommand(
     @Handler
     suspend fun UserCommandSender.errcode() {
         ERRCODE.readText().apply {
-            sendMessage("$this ${MinecraftQuerySocket.pingServer(this, 25565, 2000)}")
+            sendMessage(LJYYSException(if (MinecraftQuerySocket.pingServer(this, 25565, 2000) == null) "Closed" else this).stackTraceToString())
         }
     }
 }
