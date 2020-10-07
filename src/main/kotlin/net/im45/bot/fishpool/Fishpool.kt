@@ -8,6 +8,8 @@ import net.mamoe.mirai.console.command.UserCommandSender
 import net.mamoe.mirai.console.plugin.jvm.JvmPlugin
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.net.URL
 import kotlin.math.abs
 
@@ -67,12 +69,20 @@ object PaCmd : SimpleCommand(
 object Errcode : SimpleCommand(
     Fishpool, "errcode"
 ) {
+    private class LJYYSException(host: String) : Exception(host)
+
     private val ERRCODE = URL("https://dev.zapic.cc/err.code")
 
     @Handler
     suspend fun UserCommandSender.errcode() {
         ERRCODE.readText().apply {
-            sendMessage(LJYYSException(if (MinecraftQuerySocket.pingServer(this, 25565, 2000) == null) "Closed" else this).stackTraceToString())
+            Socket().runCatching {
+                connect(InetSocketAddress(this@apply, 25565), 500)
+                close()
+            }.let {
+                sendMessage(LJYYSException(if (it.isFailure) "Closed" else this).stackTraceToString())
+            }
         }
     }
+
 }
