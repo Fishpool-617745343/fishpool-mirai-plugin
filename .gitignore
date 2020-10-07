@@ -1,6 +1,3 @@
 /.gradle
 /build
-
-/deploy.sh
-
-/fishpool.iml
+/src/test/
