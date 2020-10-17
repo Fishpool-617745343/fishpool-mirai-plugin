@@ -15,10 +15,10 @@ import kotlin.math.abs
 
 @AutoService(JvmPlugin::class)
 object Fishpool : KotlinPlugin(
-    JvmPluginDescription(
-        "net.im45.bot.fishpool",
-        "0.2.0"
-    )
+        JvmPluginDescription(
+                "net.im45.bot.fishpool",
+                "0.2.1"
+        )
 ) {
     override fun onEnable() {
         super.onEnable()
@@ -37,7 +37,7 @@ object Fishpool : KotlinPlugin(
 }
 
 object OhCmd : SimpleCommand(
-    Fishpool, "oh"
+        Fishpool, "oh"
 ) {
     @Handler
     suspend fun UserCommandSender.oh(h: Short) {
@@ -47,7 +47,7 @@ object OhCmd : SimpleCommand(
 }
 
 object NaCmd : SimpleCommand(
-    Fishpool, "na"
+        Fishpool, "na"
 ) {
     @Handler
     suspend fun UserCommandSender.na(n: Short) {
@@ -57,7 +57,7 @@ object NaCmd : SimpleCommand(
 }
 
 object PaCmd : SimpleCommand(
-    Fishpool, "pa"
+        Fishpool, "pa"
 ) {
     @Handler
     suspend fun UserCommandSender.pa(p: Short) {
@@ -67,7 +67,8 @@ object PaCmd : SimpleCommand(
 }
 
 object Errcode : SimpleCommand(
-    Fishpool, "errcode"
+        Fishpool, "errcode",
+        description = "err.code"
 ) {
     private class LJYYSException(host: String) : Exception(host)
 
@@ -75,14 +76,22 @@ object Errcode : SimpleCommand(
 
     @Handler
     suspend fun UserCommandSender.errcode() {
-        ERRCODE.readText().apply {
+        ERRCODE.readText().let { ec ->
             Socket().runCatching {
-                connect(InetSocketAddress(this@apply, 25565), 500)
+                connect(InetSocketAddress(ec, 25565), 500)
                 close()
-            }.let {
-                sendMessage(LJYYSException(if (it.isFailure) "Closed" else this).stackTraceToString())
+            }.let { res ->
+                val out = LJYYSException(if (res.isFailure) "Closed" else ec).run {
+                    val lim = 3
+                    val sb = StringBuilder("Exception in thread \"${Thread.currentThread().name}\": $this")
+                    stackTrace.take(lim).forEach { sb.append("\n\tat $it") }
+                    if (stackTrace.size > lim) sb.append("\n\t... ${stackTrace.size - lim} more")
+
+                    sb.toString()
+                }
+
+                sendMessage(out)
             }
         }
     }
-
 }
