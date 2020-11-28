@@ -23,7 +23,8 @@ import kotlin.math.abs
 object Fishpool : KotlinPlugin(
         JvmPluginDescription(
                 "net.im45.bot.fishpool",
-                "0.2.1"
+                "0.2.1",
+                "Fishpool"
         )
 ) {
     override fun onEnable() {
@@ -43,7 +44,8 @@ object Fishpool : KotlinPlugin(
 }
 
 object OhCmd : SimpleCommand(
-        Fishpool, "oh"
+        Fishpool, "oh",
+        description = "OHHHHHHHH"
 ) {
     @Handler
     suspend fun UserCommandSender.oh(h: Short = 16) {
@@ -53,7 +55,8 @@ object OhCmd : SimpleCommand(
 }
 
 object NaCmd : SimpleCommand(
-        Fishpool, "na"
+        Fishpool, "na",
+        description = "呐"
 ) {
     @Handler
     suspend fun UserCommandSender.na(n: Short = 2) {
@@ -63,7 +66,8 @@ object NaCmd : SimpleCommand(
 }
 
 object PaCmd : SimpleCommand(
-        Fishpool, "pa"
+        Fishpool, "pa",
+        description = "爬"
 ) {
     @Handler
     suspend fun UserCommandSender.pa(p: Short = 1) {
@@ -109,9 +113,9 @@ object Errcode : SimpleCommand(
             sendMessage(stackTraceFormatter(it))
         }.onSuccess { ec ->
             Socket().runCatching {
-                use { connect(InetSocketAddress(ec, 25565), 500) }
-            }.let { res ->
-                val out = stackTraceFormatter(LJYYSException(if (res.isFailure) "Closed" else ec))
+                use { connect(InetSocketAddress(ec, 25565), 1000) }
+            }.let {
+                val out = stackTraceFormatter(LJYYSException(if (it.isFailure) "Closed" else ec))
                 sendMessage(out)
             }
         }
