@@ -21,11 +21,11 @@ import kotlin.math.abs
 
 @AutoService(JvmPlugin::class)
 object Fishpool : KotlinPlugin(
-        JvmPluginDescription(
-                "net.im45.bot.fishpool",
-                "0.2.1",
-                "Fishpool"
-        )
+    JvmPluginDescription(
+        "net.im45.bot.fishpool",
+        "0.2.2",
+        "Fishpool"
+    )
 ) {
     override fun onEnable() {
         super.onEnable()
@@ -44,8 +44,8 @@ object Fishpool : KotlinPlugin(
 }
 
 object OhCmd : SimpleCommand(
-        Fishpool, "oh",
-        description = "OHHHHHHHH"
+    Fishpool, "oh",
+    description = "OHHHHHHHH"
 ) {
     @Handler
     suspend fun UserCommandSender.oh(h: Short = 16) {
@@ -55,8 +55,8 @@ object OhCmd : SimpleCommand(
 }
 
 object NaCmd : SimpleCommand(
-        Fishpool, "na",
-        description = "呐"
+    Fishpool, "na",
+    description = "呐"
 ) {
     @Handler
     suspend fun UserCommandSender.na(n: Short = 2) {
@@ -66,8 +66,8 @@ object NaCmd : SimpleCommand(
 }
 
 object PaCmd : SimpleCommand(
-        Fishpool, "pa",
-        description = "爬"
+    Fishpool, "pa",
+    description = "爬"
 ) {
     @Handler
     suspend fun UserCommandSender.pa(p: Short = 1) {
@@ -77,8 +77,8 @@ object PaCmd : SimpleCommand(
 }
 
 object Errcode : SimpleCommand(
-        Fishpool, "errcode",
-        description = "err.code"
+    Fishpool, "errcode",
+    description = "err.code"
 ) {
     private val errcode = URL("https://dev.zapic.moe/err.code")
     private val client = HttpClient(CIO) {
@@ -89,12 +89,13 @@ object Errcode : SimpleCommand(
         }
     }
 
-    private class LJYYSException(host: String) : Exception(host)
+    private class LJYYSException(opening: Boolean, host: String) : Exception(if (opening) host else "Closed@$host")
 
     private object ErrcodeConfig : AutoSavePluginConfig("errcode") {
         val connectTimeout by value(10000L)
         val requestTimeout by value(30000L)
         val socketTimeout by value(10000L)
+        val serverTimeout by value(1000)
     }
 
     private fun stackTraceFormatter(ex: Throwable, limit: Int = 3) = buildString {
@@ -107,16 +108,15 @@ object Errcode : SimpleCommand(
 
     @Handler
     suspend fun UserCommandSender.errcode() {
-        client.runCatching {
-            get<String>(errcode)
+        runCatching {
+            client.get<String>(errcode)
         }.onFailure {
             sendMessage(stackTraceFormatter(it))
         }.onSuccess { ec ->
             Socket().runCatching {
-                use { connect(InetSocketAddress(ec, 25565), 1000) }
+                use { connect(InetSocketAddress(ec, 25565), ErrcodeConfig.serverTimeout) }
             }.let {
-                val out = stackTraceFormatter(LJYYSException(if (it.isFailure) "Closed" else ec))
-                sendMessage(out)
+                sendMessage(stackTraceFormatter(LJYYSException(it.isSuccess, ec)))
             }
         }
     }
